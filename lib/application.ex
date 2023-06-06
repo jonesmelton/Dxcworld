@@ -5,7 +5,7 @@ defmodule Dxcworld.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      Dxcworld.Repo,
+      Dxcworld.Repo
     ]
 
     opts = [strategy: :one_for_one, name: Dxcworld.Supervisor]

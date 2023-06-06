@@ -24,7 +24,7 @@ defmodule Dxcworld.MixProject do
   defp deps do
     [
       {:ecto_sql, "~> 3.10"},
-      {:ecto_sqlite3, ">= 0.0.0"}
+      {:ecto_sqlite3, ">= 0.0.0"},
     ]
   end
 
