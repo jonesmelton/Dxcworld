@@ -11,8 +11,11 @@ defmodule Dxcworld.Mud.Conn do
   use GenServer
   require Logger
 
-  @host {82, 68, 167, 69}
   @port 4242
+  @host (case Application.compile_env(Dxcworld, :real_telnet?) do
+           false -> {127, 0, 0, 1}
+           _ -> {82, 68, 167, 69}
+         end)
 
   def com(command) do
     GenServer.cast(:mud_socket, {:message, command <> "\r\n"})

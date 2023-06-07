@@ -16,14 +16,13 @@ defmodule Dxcworld.Mud.Telnet do
   @type frame :: <<_::8, _::_*256>>
 
   @typedoc """
-  `chunk` is the outcome of splitting a telnet frame.
-  Either a text fragment, a command sequence, or end of
-  input.
+  `current` represents the progress of chunking a telnet
+  frame. The first member is a bitstring of either a valid
+  string or a telnet command. The second member is the
+  remainder of the frame, or nothing if it is fully
+  processed.
   """
-  @type chunk ::
-          {:text, frame}
-          | {:command, frame}
-          | {:complete, :none}
+  @type current :: {fragment :: nonempty_charlist, rest :: frame | :done}
 
   @doc """
   Splits a frame into meaningful fragments and
@@ -31,7 +30,7 @@ defmodule Dxcworld.Mud.Telnet do
   the bitstring is awkward but it should be efficient
   and avoids having to stream it.
   """
-  @spec chunkify(frame) :: chunk
+  @spec chunkify(frame) :: current
   def chunkify(frame) do
     case :binary.match(frame, <<255>>) do
       :nomatch ->
