@@ -25,6 +25,7 @@ defmodule Dxcworld.MixProject do
     [
       {:ecto_sql, "~> 3.10"},
       {:ecto_sqlite3, ">= 0.0.0"},
+      {:dialyxir, "~> 1.3", only: [:dev], runtime: false}
     ]
   end
 
