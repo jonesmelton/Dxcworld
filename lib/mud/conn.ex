@@ -11,11 +11,8 @@ defmodule Dxcworld.Mud.Conn do
   use GenServer
   require Logger
 
+  @host {82, 68, 167, 69}
   @port 4242
-  @host (case Application.compile_env(Dxcworld, :real_telnet?) do
-           false -> {127, 0, 0, 1}
-           _ -> {82, 68, 167, 69}
-         end)
 
   def com(command) do
     GenServer.cast(:mud_socket, {:message, command <> "\r\n"})
@@ -35,12 +32,18 @@ defmodule Dxcworld.Mud.Conn do
   @impl true
   @doc "Initializes the socket connection."
   def handle_info(:connect, state) do
-    Logger.info("connecting to #{:inet.ntoa(@host)}:#{@port}")
+    if Mix.env() == :test do
+      Logger.info("not connecting to telnet socket bc of :env")
+    else
+      Logger.info("connecting to #{:inet.ntoa(@host)}:#{@port}")
 
-    case :gen_tcp.connect(@host, @port, [:binary, active: true, packet: 0]) do
-      {:ok, socket} -> {:noreply, %{state | socket: socket}}
-      {:error, reason} -> terminate(reason, state)
+      case :gen_tcp.connect(@host, @port, [:binary, active: true, packet: 0]) do
+        {:ok, socket} -> {:noreply, %{state | socket: socket}}
+        {:error, reason} -> terminate(reason, state)
+      end
     end
+
+    {:noreply, state}
   end
 
   @impl true
